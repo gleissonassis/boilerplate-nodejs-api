@@ -1,7 +1,4 @@
-var Promise         = require('promise');
-var logger          = require('../config/logger');
-
-module.exports = function(dependencies) {
+module.exports = function(dependencies, logger) {
   var mailTemplateDAO = dependencies.mailTemplateDAO;
   var modelParser = dependencies.modelParser;
 

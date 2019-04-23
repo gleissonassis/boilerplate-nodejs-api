@@ -1,5 +1,6 @@
 var settings              = require('../../../src/config/settings');
 var SendMailHelper        = require('../../../src/helpers/sendMailHelper');
+var Logger                = require('../../../src/config/logger');
 var nodemailer            = require('nodemailer');
 
 describe('helpers', function(){
@@ -7,7 +8,7 @@ describe('helpers', function(){
     it('should send an email to gleisson.assis@gmail.com', function() {
       this.timeout(5000);
 
-      var sendMailHelper = new SendMailHelper(nodemailer);
+      var sendMailHelper = new SendMailHelper(nodemailer, new Logger());
       sendMailHelper.options = settings.mailOptions;
 
       return sendMailHelper.send({

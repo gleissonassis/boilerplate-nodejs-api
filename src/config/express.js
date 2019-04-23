@@ -18,6 +18,7 @@ module.exports = function() {
   app.use(methodOverride());
   app.use(morgan('dev'));
   app.use(cors());
+  app.use(expressHelper.createLogger);
   app.use(expressHelper.parseCurrentUser);
 
   load('controllers', {cwd:'src/api', verbose:true})

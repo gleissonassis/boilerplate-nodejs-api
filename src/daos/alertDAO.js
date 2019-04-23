@@ -1,9 +1,7 @@
-var logger              = require('winston');
 var model               = require('../models/alert')();
-var Promise             = require('promise');
 var $                   = require('mongo-dot-notation');
 
-module.exports = function() {
+module.exports = function(logger) {
   var projectionCommonFields = {
     __v: false,
     isEnabled: false,

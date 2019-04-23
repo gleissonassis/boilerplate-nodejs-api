@@ -1,9 +1,7 @@
-var Promise         = require('promise');
-var md5             = require('../helpers/md5');
-var logger          = require('../config/logger');
+var hashHelper             = require('../helpers/hashHelper');
 var settings        = require('../config/settings');
 
-module.exports = function(dependencies) {
+module.exports = function(dependencies, logger) {
   var userDAO = dependencies.userDAO;
   var jwtHelper = dependencies.jwtHelper;
   var modelParser = dependencies.modelParser;
@@ -56,7 +54,7 @@ module.exports = function(dependencies) {
             if (!user) {
               logger.debug('[UserBO] Saving the new user. Entity: ', JSON.stringify(entity));
               var o = modelParser.prepare(entity, true);
-              o.password = md5(entity.password);
+              o.password = hashHelper(entity.password);
               logger.debug('[UserBO] Entity  after prepare: ', JSON.stringify(o));
               return userDAO.save(o);
             } else {
@@ -92,15 +90,15 @@ module.exports = function(dependencies) {
               logger.debug('[UserBO] Saving the new user. Entity: ', JSON.stringify(entity));
               var o = modelParser.prepare(entity, true);
               if (o.password) {
-                o.password = md5(entity.password);
+                o.password = hashHelper(entity.password);
               }
 
-              confirmationKey = md5(randomConfirmationKey);
+              confirmationKey = hashHelper(randomConfirmationKey);
               o.confirmation = {
                 key: confirmationKey,
                 isConfirmed: false
               };
-              o.internalKey = md5(randomInternalKey + confirmationKey);
+              o.internalKey = hashHelper(randomInternalKey + confirmationKey);
 
               logger.debug('[UserBO] Entity  after prepare: ', JSON.stringify(o));
 
@@ -144,11 +142,11 @@ module.exports = function(dependencies) {
           .then(function(user) {
             if (!user || (user && user.id === entity.id)) {
               if (o.password) {
-                o.password = md5(o.password);
+                o.password = hashHelper(o.password);
               }
 
               // generating a new internal key for security reasons
-              o.internalKey = md5(o.internalKey + new Date());
+              o.internalKey = hashHelper(o.internalKey + new Date());
 
               return userDAO.update(o);
             } else {
@@ -203,7 +201,7 @@ module.exports = function(dependencies) {
             } else {
               var filter = {
                 email: email,
-                password: md5(password)
+                password: hashHelper(password)
               };
 
               return self.getAll(filter, true);
@@ -257,6 +255,36 @@ module.exports = function(dependencies) {
           .then(function(users) {
             if (users.length) {
               logger.info('[UserBO] User found by email', JSON.stringify(users[0]));
+              return users[0];
+            } else {
+              return null;
+            }
+          })
+          .then(resolve)
+          .catch(reject);
+      });
+    },
+
+    getByToken: function(token, isMaster) {
+      var self = this;
+
+      return new Promise(function(resolve, reject) {
+        var filter = null;
+
+        if (isMaster !== undefined) {
+          filter = {
+            token: {$elemMatch: {hash: token, isMaster: true}}
+          };
+        } else {
+          filter = {
+            token: {$elemMatch: {hash: token}}
+          };
+        }
+
+        self.getAll(filter, false)
+          .then(function(users) {
+            if (users.length) {
+              logger.debug('[UserBO] User was found by id token', JSON.stringify(users[0]));
               return users[0];
             } else {
               return null;
@@ -364,7 +392,7 @@ module.exports = function(dependencies) {
         userDAO.getByInternalKey(userId, internalKey)
           .then(function(user) {
             if (user) {
-              return userDAO.resetPassword(userId, md5(Math.random() + internalKey), md5(newPassword));
+              return userDAO.resetPassword(userId, hashHelper(Math.random() + internalKey), hashHelper(newPassword));
             } else {
               throw {
                 status: 404,

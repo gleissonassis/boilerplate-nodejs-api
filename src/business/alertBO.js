@@ -1,7 +1,4 @@
-var Promise         = require('promise');
-var logger          = require('../config/logger');
-
-module.exports = function(dependencies) {
+module.exports = function(dependencies, logger) {
   var alertDAO = dependencies.alertDAO;
   var modelParser = dependencies.modelParser;
   var dateHelper = dependencies.dateHelper;
@@ -80,7 +77,7 @@ module.exports = function(dependencies) {
     createFailedLoginAlert: function(userId, data, info) {
       return this.createAlert(userId, 'LOGIN_FAILED', 'Failed login', data, info);
     },
-    
+
     save: function(entity) {
       return new Promise(function(resolve, reject) {
         var chain = Promise.resolve();

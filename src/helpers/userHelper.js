@@ -1,6 +1,4 @@
-var logger      = require('../config/logger');
-
-module.exports = function() {
+module.exports = function(logger) {
   return {
     isAdministrator: function(user) {
       logger.info('Checking if the user is an administrator', JSON.stringify(user));

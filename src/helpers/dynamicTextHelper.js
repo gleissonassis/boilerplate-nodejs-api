@@ -1,6 +1,4 @@
-var logger        = require('../config/logger');
-
-module.exports = function(dependencies) {
+module.exports = function(dependencies, logger) {
   var stringReplacerHelper = dependencies.stringReplacerHelper;
 
   return {

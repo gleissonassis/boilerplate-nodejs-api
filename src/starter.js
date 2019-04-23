@@ -4,7 +4,7 @@ var DAOFactory            = require('./daos/daoFactory');
 var ModelParser           = require('./models/modelParser');
 var JWTHelper             = require('./helpers/jwtHelper');
 var UserHelper            = require('./helpers/userHelper');
-var md5                   = require('./helpers/md5');
+var hashHelper                   = require('./helpers/hashHelper');
 var Promise               = require('promise');
 
 module.exports = function() {
@@ -62,10 +62,10 @@ module.exports = function() {
             password: '123456',
             role: 'admin',
             confirmation: {
-              key: md5('.'),
+              key: hashHelper('.'),
               isConfirmed: false
             },
-            internalKey: md5('.')
+            internalKey: hashHelper('.')
           })
           .then(resolve)
           .catch(function(error) {

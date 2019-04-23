@@ -2,10 +2,12 @@ var request               = require('supertest');
 var chai                  = require('chai');
 var expect                = chai.expect;
 var BOFactory             = require('../../../src/business/boFactory');
+var Logger                = require('../../../src/config/logger');
 
 describe('api', function(){
   var server;
-  var bo = BOFactory.getBO('user');
+  console.log('%%%%123');
+  var bo = BOFactory.getBO('user', new Logger());
 
   before(function(){
     server = require('../../../src/server');

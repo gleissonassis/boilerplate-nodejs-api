@@ -2,11 +2,13 @@ var request               = require('supertest');
 var chai                  = require('chai');
 var expect                = chai.expect;
 var BOFactory             = require('../../../src/business/boFactory');
+var Logger                = require('../../../src/config/logger');
 
 describe('api', function(){
   var server = null;
-  var userBO = BOFactory.getBO('user');
-  var mailTemplateBO = BOFactory.getBO('mailTemplate');
+  console.log('[!!!!!!]');
+  var userBO = BOFactory.getBO('user', new Logger());
+  var mailTemplateBO = BOFactory.getBO('mailTemplate', new Logger());
 
   var adminUser = {
     name: 'Admin User',

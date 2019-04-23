@@ -1,9 +1,7 @@
-var logger              = require('winston');
 var model               = require('../models/user')();
-var Promise             = require('promise');
 var $                   = require('mongo-dot-notation');
 
-module.exports = function() {
+module.exports = function(logger) {
   var projectionAllFields = {
     password: false,
     __v: false,

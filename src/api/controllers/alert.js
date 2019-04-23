@@ -2,11 +2,11 @@ var BOFactory             = require('../../business/boFactory');
 var HTTPResponseHelper    = require('../../helpers/httpResponseHelper');
 
 module.exports = function() {
-  var business = BOFactory.getBO('alert');
 
   return {
     getAll: function(req, res) {
       var rh = new HTTPResponseHelper(req, res);
+      var business = BOFactory.getBO('alert', req.logger);
       var chain = Promise.resolve();
 
       var filter = {};
@@ -37,6 +37,7 @@ module.exports = function() {
 
     getUnreadAlerts: function(req, res) {
       var rh = new HTTPResponseHelper(req, res);
+      var business = BOFactory.getBO('alert', req.logger);
       var chain = Promise.resolve();
       var alerts = null;
       var info = {
@@ -61,6 +62,7 @@ module.exports = function() {
 
     getById: function(req, res) {
       var rh = new HTTPResponseHelper(req, res);
+      var business = BOFactory.getBO('alert', req.logger);
       var chain = Promise.resolve();
 
       chain

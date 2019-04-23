@@ -1,8 +1,6 @@
-var Promise         = require('promise');
 var settings        = require('../config/settings');
-var logger          = require('../config/logger');
 
-module.exports = function(dependencies) {
+module.exports = function(dependencies, logger) {
   var userBO = dependencies.userBO;
   var mailTemplateBO = dependencies.mailTemplateBO;
   var sendMailHelper = dependencies.sendMailHelper;

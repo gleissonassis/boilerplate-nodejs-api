@@ -1,16 +1,12 @@
 var BOFactory             = require('../../business/boFactory');
-var UserHelper            = require('../../helpers/userHelper');
+var HelperFactory         = require('../../helpers/helperFactory');
 var HTTPResponseHelper    = require('../../helpers/httpResponseHelper');
 
 module.exports = function() {
-  var userHelper = new UserHelper();
-  var business = BOFactory.getBO('user');
-  var notificationBO = BOFactory.getBO('notification');
-  var alertBO = BOFactory.getBO('alert');
-
   return {
     getAll: function(req, res) {
       var rh = new HTTPResponseHelper(req, res);
+      var business = BOFactory.getBO('user', req.logger);
       business.getAll({})
         .then(rh.ok)
         .catch(rh.error);
@@ -18,6 +14,8 @@ module.exports = function() {
 
     save: function(req, res) {
       var rh = new HTTPResponseHelper(req, res);
+      var userHelper = HelperFactory.getHelper('user', req.logger);
+      var business = BOFactory.getBO('user', req.logger);
 
       if (!userHelper.isAdministrator(req.currentUser)) {
         req.body.role = 'user';
@@ -41,6 +39,9 @@ module.exports = function() {
 
     update: function(req, res) {
       var rh = new HTTPResponseHelper(req, res);
+      var userHelper = HelperFactory.getHelper('user', req.logger);
+      var business = BOFactory.getBO('user', req.logger);
+
       req.body.id = req.params.id;
 
       //preventing forbiden actions
@@ -57,6 +58,8 @@ module.exports = function() {
 
     getById: function(req, res) {
       var rh = new HTTPResponseHelper(req, res);
+      var business = BOFactory.getBO('user', req.logger);
+
       business.getById(req.params.id)
         .then(rh.ok)
         .catch(rh.error);
@@ -64,6 +67,8 @@ module.exports = function() {
 
     updateMe: function(req, res) {
       var rh = new HTTPResponseHelper(req, res);
+      var business = BOFactory.getBO('user', req.logger);
+
       req.body.id = req.currentUser.id;
       business.update(req.body)
         .then(rh.ok)
@@ -72,6 +77,8 @@ module.exports = function() {
 
     getMe: function(req, res) {
       var rh = new HTTPResponseHelper(req, res);
+      var business = BOFactory.getBO('user', req.logger);
+
       business.getById(req.currentUser.id, true)
         .then(rh.ok)
         .catch(rh.error);
@@ -79,6 +86,8 @@ module.exports = function() {
 
     delete: function(req, res) {
       var rh = new HTTPResponseHelper(req, res);
+      var business = BOFactory.getBO('user', req.logger);
+
       business.delete(req.params.id)
         .then(rh.ok)
         .catch(rh.error);
@@ -86,6 +95,9 @@ module.exports = function() {
 
     auth: function(req, res) {
       var rh = new HTTPResponseHelper(req, res);
+      var business = BOFactory.getBO('user', req.logger);
+      var alertBO = BOFactory.getBO('alert', req.logger);
+
       var chain = Promise.resolve();
       var user = null;
       var info = {
@@ -122,6 +134,8 @@ module.exports = function() {
 
     getLoginHistory: function(req, res) {
       var rh = new HTTPResponseHelper(req, res);
+      var business = BOFactory.getBO('user', req.logger);
+
       business.getLoginHistory(req.params.id)
         .then(rh.ok)
         .catch(rh.error);
@@ -129,6 +143,8 @@ module.exports = function() {
 
     confirmUser: function(req, res) {
       var rh = new HTTPResponseHelper(req, res);
+      var business = BOFactory.getBO('user', req.logger);
+
       business.confirmUser(req.params.id,
                           req.params.key,
                           {
@@ -143,6 +159,8 @@ module.exports = function() {
 
     sendNotification: function(req, res) {
       var rh = new HTTPResponseHelper(req, res);
+      var notificationBO = BOFactory.getBO('notification', req.logger);
+
       var data = req.body;
       data.userId = req.params.id;
       notificationBO.sendNotification(data)
@@ -152,6 +170,8 @@ module.exports = function() {
 
     resetPassword: function(req, res) {
       var rh = new HTTPResponseHelper(req, res);
+      var business = BOFactory.getBO('user', req.logger);
+
       business.resetPassword(req.params.id, req.params.key, req.body.newPassword)
         .then(rh.ok)
         .catch(rh.error);
@@ -159,6 +179,8 @@ module.exports = function() {
 
     updateToken: function(req, res) {
       var rh = new HTTPResponseHelper(req, res);
+      var business = BOFactory.getBO('user', req.logger);
+
       business.generateNewToken(req.currentUser)
         .then(rh.ok)
         .catch(rh.error);
@@ -166,6 +188,8 @@ module.exports = function() {
 
     generate2FAToken: function(req, res) {
       var rh = new HTTPResponseHelper(req, res);
+      var business = BOFactory.getBO('user', req.logger);
+
       business.get2FAToken(req.currentUser.id, req.body.name)
         .then(rh.ok)
         .catch(rh.error);
@@ -173,6 +197,8 @@ module.exports = function() {
 
     configure2FAToken: function(req, res) {
       var rh = new HTTPResponseHelper(req, res);
+      var business = BOFactory.getBO('user', req.logger);
+
       var info = {
         ip: req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || req.connection.remoteAddress,
         userAgent: req.headers['user-agent']
